@@ -1,6 +1,7 @@
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -33,6 +34,8 @@ namespace Colyseus.Udp {
 		}
 
 		public bool IsOpen { get; private set; }
+		/// <summary>Round trip of the last answered keepalive, in milliseconds; null until the first, about 5s after opening.</summary>
+		public int? RttMs { get; private set; }
 		public event Action OnOpen;
 		public event Action OnClose;
 
@@ -44,6 +47,7 @@ namespace Colyseus.Udp {
 		UdpClient socket;
 		Action unsubscribe;
 		byte[] hello;
+		long? helloSentAt;
 		ushort? lastSequence;
 
 		internal UdpChannel(SynchronizationContext mainThread, Action<byte[]> dispatch, Func<Task<Ticket>> requestTicket) {
@@ -171,7 +175,10 @@ namespace Colyseus.Udp {
 		}
 
 		void SendHello() {
-			if (this.hello != null) this.Write(this.hello);
+			if (this.hello == null) return;
+
+			this.Write(this.hello);
+			this.helloSentAt = Stopwatch.GetTimestamp();
 		}
 
 		void Write(byte[] packet) {
@@ -211,16 +218,25 @@ namespace Colyseus.Udp {
 					continue;
 				}
 
-				this.mainThread.Post(_ => this.Handle(packet), null);
+				long receivedAt = Stopwatch.GetTimestamp(); // here, not on the main thread, which can be a frame late
+				this.mainThread.Post(_ => this.Handle(packet, receivedAt), null);
 			}
 		}
 
-		void Handle(byte[] packet) {
+		void Handle(byte[] packet, long receivedAt) {
 			if (this.lifetime.IsCancellationRequested || packet.Length == 0) return;
 
 			switch (packet[0]) {
 				case ACK:
-					if (this.hello == null || this.IsOpen) return;
+					if (this.hello == null) return;
+					if (this.IsOpen) {
+						if (this.helloSentAt is long sentAt) this.RttMs = (int)((receivedAt - sentAt) * 1000 / Stopwatch.Frequency);
+						this.helloSentAt = null; // one sample per HELLO, so a duplicate ACK can't stretch it
+						return;
+					}
+
+					// the handshake resends HELLO every 250ms, so this ACK may answer an older one than the last sent
+					this.helloSentAt = null;
 					this.IsOpen = true;
 					this.OnOpen?.Invoke();
 					this.opened.TrySetResult(true);

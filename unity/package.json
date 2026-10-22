@@ -1,6 +1,6 @@
 {
 	"name": "com.victormga.colyseus-udp",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"displayName": "Colyseus UDP",
 	"description": "Unreliable UDP channel for Colyseus rooms, paired with the colyseus-udp server plugin. Requires io.colyseus.sdk 0.18.",
 	"unity": "2022.3",

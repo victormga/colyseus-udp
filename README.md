@@ -32,7 +32,7 @@ Unity                                  Colyseus process
 Install by git URL in `package.json`. Bun runs `src/` directly; npm builds `build/` on install:
 
 ```json
-"colyseus-udp": "github:victormga/colyseus-udp#v0.1.2"
+"colyseus-udp": "github:victormga/colyseus-udp#v0.1.3"
 ```
 
 ```ts
@@ -70,7 +70,7 @@ Install both packages by git URL in `Packages/manifest.json`:
 
 ```json
 "io.colyseus.sdk": "https://github.com/colyseus/colyseus-unity-sdk.git#upm",
-"com.victormga.colyseus-udp": "https://github.com/victormga/colyseus-udp.git?path=unity#v0.1.2"
+"com.victormga.colyseus-udp": "https://github.com/victormga/colyseus-udp.git?path=unity#v0.1.3"
 ```
 
 ```csharp
@@ -80,6 +80,7 @@ UdpChannel udp = await UdpChannel.Connect(room, host);   // main thread; host is
 udp.Send("move", new Move { x = 1, z = 2 });             // dropped while !udp.IsOpen
 udp.OnClose += () => { /* WebSocket dropped or room left */ };
 udp.OnOpen += () => { /* open again after a reconnect */ };
+int? ping = udp.RttMs;                                   // last keepalive's round trip, updated every 5s; null until the first
 ```
 
 `Connect` throws `TimeoutException` when the server never answers over UDP (UDP is blocked), `SocketException` when the host doesn't resolve or can't be reached, and `OperationCanceledException` when the room is left after the ticket arrived but before the channel opened. Leaving while the ticket is still being requested surfaces `Room.Request`'s own error.

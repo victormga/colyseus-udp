@@ -101,6 +101,24 @@ namespace Colyseus.Udp.Tests {
 		}
 
 		[Test]
+		public async Task The_round_trip_is_measured_from_keepalives_not_the_handshake() {
+			(int? whileOpening, int? afterKeepalive) rtt = await this.mainThread.Run(async () => {
+				// slower than the handshake's 250ms resend, so the opening ACK answers an older HELLO than the last one sent
+				using FakeServer server = new FakeServer { ackDelayMs = 300 };
+				using UdpChannel channel = server.Channel();
+				await channel.Start("127.0.0.1", 1000);
+				await Task.Delay(400); // the ACK for the handshake's second HELLO arrives meanwhile
+				int? whileOpening = channel.RttMs;
+
+				await MainThread.Until(() => channel.RttMs != null, 7);
+				return (whileOpening, channel.RttMs);
+			});
+
+			Assert.That(rtt.whileOpening, Is.Null);
+			Assert.That(rtt.afterKeepalive, Is.InRange(290, 1000));
+		}
+
+		[Test]
 		public async Task Malformed_or_foreign_datagrams_never_reach_the_room() {
 			int dispatched = await this.mainThread.Run(async () => {
 				using FakeServer server = new FakeServer();

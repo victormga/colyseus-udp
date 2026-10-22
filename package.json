@@ -1,6 +1,6 @@
 {
 	"name": "colyseus-udp",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "Unreliable UDP channel for Colyseus rooms. The WebSocket stays the connection; UDP carries @unreliable state and unreliable messages.",
 	"keywords": [
 		"colyseus",

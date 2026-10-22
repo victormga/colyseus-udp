@@ -16,6 +16,7 @@ namespace Colyseus.Udp.Tests {
 		public const byte DATA = 0x03;
 
 		public int acksPerHello = 1;
+		public int ackDelayMs;
 		public readonly List<byte[]> dispatched = new List<byte[]>();
 
 		readonly ConcurrentQueue<byte[]> received = new ConcurrentQueue<byte[]>();
@@ -66,10 +67,13 @@ namespace Colyseus.Udp.Tests {
 
 				this.peer = result.RemoteEndPoint;
 				this.received.Enqueue(result.Buffer);
-				if (result.Buffer.Length > 0 && result.Buffer[0] == HELLO) {
-					for (int i = 0; i < this.acksPerHello; i++) this.Send(ACK);
-				}
+				if (result.Buffer.Length > 0 && result.Buffer[0] == HELLO) _ = this.Ack();
 			}
+		}
+
+		async Task Ack() {
+			if (this.ackDelayMs > 0) await Task.Delay(this.ackDelayMs).ConfigureAwait(false);
+			for (int i = 0; i < this.acksPerHello; i++) this.Send(ACK);
 		}
 	}
 }
