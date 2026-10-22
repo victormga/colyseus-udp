@@ -1,0 +1,14 @@
+{
+	"name": "com.victormga.colyseus-udp",
+	"version": "0.1.2",
+	"displayName": "Colyseus UDP",
+	"description": "Unreliable UDP channel for Colyseus rooms, paired with the colyseus-udp server plugin. Requires io.colyseus.sdk 0.18.",
+	"unity": "2022.3",
+	"samples": [
+		{
+			"displayName": "Capsules",
+			"description": "Capsules moving over the UDP channel, against the repo's example server.",
+			"path": "Samples~/Capsules"
+		}
+	]
+}

@@ -1,0 +1,8 @@
+{
+	"name": "Colyseus.Udp",
+	"rootNamespace": "Colyseus.Udp",
+	"references": [
+		"ColyseusSDK"
+	],
+	"autoReferenced": true
+}

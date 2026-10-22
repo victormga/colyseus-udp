@@ -1,0 +1,47 @@
+{
+	"name": "colyseus-udp",
+	"version": "0.1.2",
+	"description": "Unreliable UDP channel for Colyseus rooms. The WebSocket stays the connection; UDP carries @unreliable state and unreliable messages.",
+	"keywords": [
+		"colyseus",
+		"udp",
+		"unreliable",
+		"multiplayer"
+	],
+	"repository": "github:victormga/colyseus-udp",
+	"type": "module",
+	"types": "./src/index.ts",
+	"exports": {
+		".": {
+			"types": "./src/index.ts",
+			"bun": "./src/index.ts",
+			"default": "./build/index.js"
+		}
+	},
+	"files": [
+		"build",
+		"src"
+	],
+	"engines": {
+		"node": ">=22"
+	},
+	"scripts": {
+		"build": "tsc -p tsconfig.build.json",
+		"prepare": "npm run build",
+		"typecheck": "tsc",
+		"example": "tsx example/server.ts",
+		"test": "node --import tsx --test test/*.test.ts"
+	},
+	"peerDependencies": {
+		"@colyseus/core": "^0.18.19"
+	},
+	"devDependencies": {
+		"@colyseus/core": "0.18.19",
+		"@colyseus/schema": "5.0.41",
+		"@colyseus/sdk": "0.18.5",
+		"@colyseus/ws-transport": "0.18.4",
+		"@types/node": "^22.10.0",
+		"tsx": "^4.19.0",
+		"typescript": "^5.7.0"
+	}
+}

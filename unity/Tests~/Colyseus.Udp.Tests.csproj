@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- Runs the package's runtime outside Unity, against the example server or a fake UDP peer. Unity ignores folders ending in "~". -->
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<!-- Unity 2022.3's C# version, so the package can't use newer syntax -->
+		<LangVersion>9.0</LangVersion>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Include="../Runtime/**/*.cs" />
+		<Compile Include="../Samples~/Capsules/CapsulesState.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Colyseus" Version="0.18.8" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+		<PackageReference Include="NUnit" Version="3.14.0" />
+		<PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+	</ItemGroup>
+
+</Project>
