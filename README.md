@@ -69,7 +69,7 @@ Options: `host` (announced to clients when the room's process is reachable at a 
 Install both packages by git URL in `Packages/manifest.json`:
 
 ```json
-"io.colyseus.sdk": "https://github.com/colyseus/colyseus-unity-sdk.git?path=Assets/Colyseus#0.18.8",
+"io.colyseus.sdk": "https://github.com/colyseus/colyseus-unity-sdk.git#upm",
 "com.victormga.colyseus-udp": "https://github.com/victormga/colyseus-udp.git?path=unity#v0.1.2"
 ```
 
